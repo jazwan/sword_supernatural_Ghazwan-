@@ -1,0 +1,368 @@
+--// Created by Ghazwan - Multi-Language Version (English First)
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+
+-- قاموس الترجمة للغات الثمانية
+local Translations = {
+    ["English"] = {
+        Run = "Run Sword Script ⚔️",
+        Support = "Please support the developer:\nTikTok: jazwan27",
+        Note = "[Note: Please do not use any speed booster, flight booster, or anything that speeds up the Halo process.]",
+        Copied = "TikTok Copied! 📋"
+    },
+    ["العربية"] = {
+        Run = "تشغيل سكربت السيف ⚔️",
+        Support = "يرجى دعم المطور:\nتيك توك: jazwan27",
+        Note = "[ملاحظة: يرجى عدم استخدام أي مسرع سرعة أو مسرع طيران أو أي شيء يسرع عملية الهالو.]",
+        Copied = "تم نسخ التيك توك! 📋"
+    },
+    ["हिन्दी"] = {
+        Run = "तलवार स्क्रिप्ट चलाएं ⚔️",
+        Support = "डेवलपर का समर्थन करें:\nTikTok: jazwan27",
+        Note = "[नोट: कृपया किसी भी गति बूस्टर या उड़ान बूस्टर का उपयोग न करें।]",
+        Copied = "TikTok कॉपी हो गया! 📋"
+    },
+    ["中文"] = {
+        Run = "运行剑法脚本 ⚔️",
+        Support = "请支持开发者：\nTikTok: jazwan27",
+        Note = "[注意：请勿使用任何加速或飞行增强功能。]",
+        Copied = "TikTok 已复制！📋"
+    },
+    ["Español"] = {
+        Run = "Ejecutar Script de Espada ⚔️",
+        Support = "Por favor apoya al desarrollador:\nTikTok: jazwan27",
+        Note = "[Nota: No uses aceleradores de velocidad ni de vuelo.]",
+        Copied = "¡TikTok Copiado! 📋"
+    },
+    ["Русский"] = {
+        Run = "Запустить Скрипт Меча ⚔️",
+        Support = "Пожалуйста, поддержите разработчика:\nTikTok: jazwan27",
+        Note = "[Примечание: Не используйте бустеры скорости или полета.]",
+        Copied = "TikTok скопирован! 📋"
+    },
+    ["Français"] = {
+        Run = "Lancer le Script d'Épée ⚔️",
+        Support = "Veuillez soutenir le développeur:\nTikTok: jazwan27",
+        Note = "[Remarque: N'utilisez pas de booster de vitesse ou de vol.]",
+        Copied = "TikTok Copié! 📋"
+    },
+    ["日本語"] = {
+        Run = "ソードスクリプトを実行 ⚔️",
+        Support = "開発者をサポートしてください：\nTikTok: jazwan27",
+        Note = "[注：スピードブースターや飛行ブースターは使用しないでください。]",
+        Copied = "TikTok コピー完了！📋"
+    }
+}
+
+-- نظام الإشعارات
+local NotifyGui = Instance.new("ScreenGui", CoreGui)
+local function ShowNotification(text)
+    local Frame = Instance.new("Frame", NotifyGui)
+    Frame.Size = UDim2.new(0, 200, 0, 40)
+    Frame.Position = UDim2.new(1, 0, 1, -100)
+    Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    Frame.BorderSizePixel = 0
+    Frame.ClipsDescendants = true
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 8)
+    
+    local Stroke = Instance.new("UIStroke", Frame)
+    Stroke.Thickness = 2
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    
+    local Label = Instance.new("TextLabel", Frame)
+    Label.Size = UDim2.new(1, -10, 1, 0)
+    Label.Position = UDim2.new(0, 5, 0, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = text
+    Label.TextColor3 = Color3.new(1, 1, 1)
+    Label.Font = Enum.Font.SourceSansBold
+    Label.TextSize = 14
+    
+    local counter = 0
+    local rgbConnection = RunService.RenderStepped:Connect(function()
+        counter = counter + 0.01
+        Stroke.Color = Color3.fromHSV(counter % 1, 1, 1)
+        Label.TextColor3 = Color3.fromHSV(counter % 1, 1, 1)
+    end)
+    
+    Frame:TweenPosition(UDim2.new(1, -210, 1, -100), "Out", "Quart", 0.5, true)
+    task.delay(3, function()
+        Frame:TweenPosition(UDim2.new(1, 0, 1, -100), "In", "Quart", 0.5, true, function()
+            rgbConnection:Disconnect()
+            Frame:Destroy()
+        end)
+    end)
+end
+
+-- الواجهة الرئيسية
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.Name = "Ghazwan_SmartHub"
+
+-- أيقونة القط الدائرية
+local SmartCatCircle = Instance.new("ImageButton", ScreenGui)
+SmartCatCircle.Size = UDim2.new(0, 45, 0, 45)
+SmartCatCircle.Position = UDim2.new(0, 50, 0.5, 0) 
+SmartCatCircle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+SmartCatCircle.Image = "rbxassetid://79800588917778"
+SmartCatCircle.Draggable = true 
+SmartCatCircle.Active = true
+Instance.new("UICorner", SmartCatCircle).CornerRadius = UDim.new(1, 0)
+
+local CatStroke = Instance.new("UIStroke", SmartCatCircle)
+CatStroke.Thickness = 3
+task.spawn(function()
+    local c = 0
+    while task.wait() do 
+        c = c + 0.01 
+        CatStroke.Color = Color3.fromHSV(c % 1, 1, 1) 
+    end
+end)
+
+-- الإطار الرئيسي
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Name = "MainFrame"
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -140)
+MainFrame.Size = UDim2.new(0, 0, 0, 0)
+MainFrame.Visible = true
+MainFrame.ClipsDescendants = false
+MainFrame.Active = true
+MainFrame.Draggable = true 
+Instance.new("UICorner", MainFrame)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Thickness = 3
+task.spawn(function()
+    local counter = 0
+    while task.wait() do
+        counter = counter + 0.01
+        MainStroke.Color = Color3.fromHSV(counter % 1, 1, 1)
+    end
+end)
+
+-- شريط العنوان العلوي
+local Header = Instance.new("Frame", MainFrame)
+Header.Size = UDim2.new(1, 0, 0, 40)
+Header.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 10)
+
+local MainTitle = Instance.new("TextLabel", Header)
+MainTitle.Size = UDim2.new(1, -80, 1, 0)
+MainTitle.Position = UDim2.new(0, 15, 0, 0)
+MainTitle.BackgroundTransparency = 1
+MainTitle.Text = "Hello Saif_Ghazwan"
+MainTitle.TextColor3 = Color3.new(1,1,1)
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.TextSize = 16
+MainTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+-- زر التصغير
+local MiniButton = Instance.new("TextButton", Header)
+MiniButton.Size = UDim2.new(0, 30, 0, 30)
+MiniButton.Position = UDim2.new(1, -70, 0, 5)
+MiniButton.Text = "-"
+MiniButton.BackgroundColor3 = Color3.fromRGB(120, 0, 0) 
+MiniButton.TextColor3 = Color3.new(1, 1, 1)
+MiniButton.Font = Enum.Font.SourceSansBold
+MiniButton.TextSize = 20
+Instance.new("UICorner", MiniButton)
+
+-- زر الإغلاق
+local CloseButton = Instance.new("TextButton", Header)
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.Text = "x"
+CloseButton.BackgroundColor3 = Color3.fromRGB(120,0,0)
+CloseButton.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", CloseButton)
+
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Back", 0.5, true, function()
+        ScreenGui:Destroy()
+    end)
+end)
+
+MainFrame:TweenSize(UDim2.new(0, 350, 0, 280), "Out", "Back", 0.7, true)
+
+-- زر تشغيل السكربت (افتراضياً بالإنجليزية)
+local SingleButton = Instance.new("TextButton", MainFrame)
+SingleButton.Size = UDim2.new(0.85, 0, 0, 45)
+SingleButton.Position = UDim2.new(0.075, 0, 0, 50)
+SingleButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+SingleButton.Text = Translations["English"].Run
+SingleButton.TextColor3 = Color3.new(1, 1, 1)
+SingleButton.Font = Enum.Font.SourceSansBold
+SingleButton.TextSize = 15
+Instance.new("UICorner", SingleButton)
+
+local ButtonStroke = Instance.new("UIStroke", SingleButton)
+ButtonStroke.Thickness = 2
+task.spawn(function()
+    local counter = 0
+    while task.wait() do
+        counter = counter + 0.01
+        ButtonStroke.Color = Color3.fromHSV(counter % 1, 1, 1)
+    end
+end)
+
+SingleButton.MouseButton1Click:Connect(function()
+    ShowNotification("[Work completed]")
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/jazwan/Hello-Saif_Ghazwan/refs/heads/main/Hello-Saif.lua"))()
+    end)
+end)
+
+-- زر دعم المطور
+local InfoNoteButton = Instance.new("TextButton", MainFrame)
+InfoNoteButton.Size = UDim2.new(0.85, 0, 0, 45)
+InfoNoteButton.Position = UDim2.new(0.075, 0, 0, 105)
+InfoNoteButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+InfoNoteButton.Text = Translations["English"].Support
+InfoNoteButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfoNoteButton.Font = Enum.Font.SourceSansBold
+InfoNoteButton.TextSize = 13
+InfoNoteButton.TextWrapped = true
+Instance.new("UICorner", InfoNoteButton)
+
+local NoteStroke = Instance.new("UIStroke", InfoNoteButton)
+NoteStroke.Thickness = 1.5
+task.spawn(function()
+    local c = 0
+    while task.wait() do
+        c = c + 0.01
+        NoteStroke.Color = Color3.fromHSV(c % 1, 1, 1)
+    end
+end)
+
+local currentCopiedMsg = Translations["English"].Copied
+InfoNoteButton.MouseButton1Click:Connect(function()
+    setclipboard("jazwan27")
+    ShowNotification(currentCopiedMsg)
+end)
+
+-- زر الملاحظة التنبيهية
+local WarningNoteButton = Instance.new("TextButton", MainFrame)
+WarningNoteButton.Size = UDim2.new(0.85, 0, 0, 55)
+WarningNoteButton.Position = UDim2.new(0.075, 0, 0, 160)
+WarningNoteButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+WarningNoteButton.Text = Translations["English"].Note
+WarningNoteButton.TextColor3 = Color3.fromRGB(255, 200, 0)
+WarningNoteButton.Font = Enum.Font.SourceSansBold
+WarningNoteButton.TextSize = 12
+WarningNoteButton.TextWrapped = true
+Instance.new("UICorner", WarningNoteButton)
+
+local WarnStroke = Instance.new("UIStroke", WarningNoteButton)
+WarnStroke.Thickness = 1.5
+task.spawn(function()
+    local c = 0
+    while task.wait() do
+        c = c + 0.01
+        WarnStroke.Color = Color3.fromHSV(c % 1, 1, 1)
+    end
+end)
+
+-- زر تغيير اللغات في أسفل اليسار (افتراضياً English)
+local LangButton = Instance.new("TextButton", MainFrame)
+LangButton.Size = UDim2.new(0, 110, 0, 30)
+LangButton.Position = UDim2.new(0, 15, 0, 235)
+LangButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+LangButton.Text = "🌐 English"
+LangButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+LangButton.Font = Enum.Font.SourceSansBold
+LangButton.TextSize = 13
+Instance.new("UICorner", LangButton).CornerRadius = UDim.new(0, 6)
+
+local LangStroke = Instance.new("UIStroke", LangButton)
+LangStroke.Thickness = 1.5
+task.spawn(function()
+    local c = 0
+    while task.wait() do
+        c = c + 0.01
+        LangStroke.Color = Color3.fromHSV(c % 1, 1, 1)
+    end
+end)
+
+-- قائمة أزرار اللغات (الإنجليزية في المقدمة)
+local LangMenu = Instance.new("ScrollingFrame", MainFrame)
+LangMenu.Size = UDim2.new(0, 110, 0, 140)
+LangMenu.Position = UDim2.new(0, 15, 0, 90)
+LangMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+LangMenu.Visible = false
+LangMenu.CanvasSize = UDim2.new(0, 0, 0, 240)
+LangMenu.ScrollBarThickness = 4
+Instance.new("UICorner", LangMenu)
+
+local MenuStroke = Instance.new("UIStroke", LangMenu)
+MenuStroke.Thickness = 1
+MenuStroke.Color = Color3.fromRGB(180, 0, 0)
+
+local UIList = Instance.new("UIListLayout", LangMenu)
+UIList.SortOrder = Enum.SortOrder.LayoutOrder
+UIList.Padding = UDim.new(0, 2)
+
+-- الإنجليزية أولاً
+local LanguagesList = {"English", "العربية", "हिन्दी", "中文", "Español", "Русский", "Français", "日本語"}
+
+for _, lang in ipairs(LanguagesList) do
+    local Btn = Instance.new("TextButton", LangMenu)
+    Btn.Size = UDim2.new(1, -6, 0, 26)
+    Btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    Btn.Text = lang
+    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Btn.Font = Enum.Font.SourceSansBold
+    Btn.TextSize = 12
+    Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 4)
+    
+    Btn.MouseButton1Click:Connect(function()
+        LangButton.Text = "🌐 " .. lang
+        LangMenu.Visible = false
+        
+        local data = Translations[lang]
+        if data then
+            SingleButton.Text = data.Run
+            InfoNoteButton.Text = data.Support
+            WarningNoteButton.Text = data.Note
+            currentCopiedMsg = data.Copied
+            ShowNotification("Language: " .. lang)
+        end
+    end)
+end
+
+LangButton.MouseButton1Click:Connect(function()
+    LangMenu.Visible = not LangMenu.Visible
+end)
+
+-- التحكم بالفتح والإغلاق
+local isUIOpen = true
+local function ToggleGhazwanUI()
+    if isUIOpen then
+        MainFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Back", 0.5, true, function() 
+            MainFrame.Visible = false 
+        end)
+        ShowNotification("UI Minimized 🐾")
+    else
+        MainFrame.Visible = true
+        MainFrame:TweenSize(UDim2.new(0, 350, 0, 280), "Out", "Back", 0.5, true)
+        ShowNotification("UI Opened 🔓")
+    end
+    isUIOpen = not isUIOpen
+end
+
+SmartCatCircle.MouseButton1Click:Connect(ToggleGhazwanUI)
+MiniButton.MouseButton1Click:Connect(function() 
+    if isUIOpen then ToggleGhazwanUI() end 
+end)
+
+local function StartCircleAnimation()
+    local info = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+    local goal = {Size = UDim2.new(0, 52, 0, 52)}
+    TweenService:Create(SmartCatCircle, info, goal):Play()
+end
+StartCircleAnimation()
+
+ShowNotification("Script Ready! Created by Ghazwan 💎")
